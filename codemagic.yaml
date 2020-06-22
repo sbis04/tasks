@@ -22,10 +22,9 @@ workflows:
       - |
         # run tets
         ./gradlew test
-        
+      - |  
         # build debug apk
         ./gradlew assembleDebug
-      
     artifacts:
       - app/build/**/outputs/**/*.apk
     publishing:
