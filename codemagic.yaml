@@ -8,7 +8,7 @@ workflows:
     max_build_duration: 60
     scripts:
       # Launching Android emulator for instrumented test
-#       - flutter emulators --launch emulator
+      - emulator @emulator
       - |
         # set up debug keystore
         rm -f ~/.android/debug.keystore
@@ -22,7 +22,7 @@ workflows:
           -keysize 2048 \
           -validity 10000
       - |
-        # run tets
+        # run tests
         ./gradlew test
 #         ./gradlew connectedAndroidTest
       - |  
