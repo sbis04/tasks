@@ -3,7 +3,7 @@
 
 # Workflow setup for building Native Android project
 workflows:
-  default-workflow:
+  debug-workflow:
     name: Native Android
     max_build_duration: 60
     scripts:
