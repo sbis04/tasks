@@ -8,3 +8,4 @@ build
 .settings/	
 .classpath
 .DS_Store
+key.properties
