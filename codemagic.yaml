@@ -7,6 +7,7 @@ workflows:
     name: Native Android
     max_build_duration: 60
     scripts:
+      - flutter emulators --launch emulator
       - |
         # set up debug keystore
         rm -f ~/.android/debug.keystore
@@ -22,6 +23,7 @@ workflows:
       - |
         # run tets
         ./gradlew test
+        ./gradlew connectedAndroidTest
       - |  
         # build debug apk
         ./gradlew assembleDebug
