@@ -45,7 +45,7 @@ workflows:
         CM_KEY_ALIAS_USERNAME: app
     scripts:
       # Launching Android emulator for instrumented test
-      - emulator @emulator &
+      - emulator @emulator
       - |
         # set up release keystore
         echo $CM_KEYSTORE | base64 --decode > /tmp/keystore.keystore
