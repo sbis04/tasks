@@ -47,7 +47,7 @@ workflows:
       # Launching Android emulator for instrumented test
       - flutter emulators --launch emulator
       - |
-        # set up release key.properties
+        # set up release keystore
         echo $CM_KEYSTORE | base64 --decode > /tmp/keystore.keystore
         cat >> "$FCI_BUILD_DIR/key.properties" <<EOF
         storePassword=$CM_KEYSTORE_PASSWORD
