@@ -8,7 +8,7 @@ workflows:
     max_build_duration: 60
     scripts:
       # Launching Android emulator for instrumented test
-      - emulator @emulator &
+      - flutter emulators --launch emulator
       - |
         # set up debug keystore
         rm -f ~/.android/debug.keystore
@@ -45,7 +45,7 @@ workflows:
         CM_KEY_ALIAS_USERNAME: app
     scripts:
       # Launching Android emulator for instrumented test
-      - emulator @emulator
+      - flutter emulators --launch emulator
       - |
         # set up release keystore
         echo $CM_KEYSTORE | base64 --decode > /tmp/keystore.keystore
