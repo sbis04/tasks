@@ -45,28 +45,27 @@ workflows:
         CM_KEY_ALIAS_USERNAME: app
     scripts:
       # Launching Android emulator for instrumented test
-#       - |
-#         ~/programs/android-sdk-macosx/emulator/emulator \
-#             -avd emulator \
-#             -netdelay none \
-#             -netspeed full \
-#             -no-boot-anim \
-#             -no-snapshot-save \
-#             -no-window &
-#         EMULATOR_PID=$!
-#       - |
-#         # Wait for Android to finish booting
-#         WAIT_CMD="$ANDROID_SDK/platform-tools/adb wait-for-device shell getprop init.svc.bootanim"
-#         until $WAIT_CMD | grep -m 1 stopped; do
-#           echo "Waiting..."
-#           sleep 1
-#         done
-#       - |
-#         # Clear and capture logcat
-#         $ANDROID_SDK/platform-tools/adb logcat -c
-#         $ANDROID_SDK/platform-tools/adb logcat > build/logcat.log &
-#         LOGCAT_PID=$!
-        
+      - |
+        ~/programs/android-sdk-macosx/emulator/emulator \
+            -avd emulator \
+            -netdelay none \
+            -netspeed full \
+            -no-boot-anim \
+            -no-snapshot-save \
+            -no-window &
+        EMULATOR_PID=$!
+      - |
+        # Wait for Android to finish booting
+        WAIT_CMD="adb wait-for-device shell getprop init.svc.bootanim"
+        until $WAIT_CMD | grep -m 1 stopped; do
+          echo "Waiting..."
+          sleep 1
+        done
+      - |
+        # Clear and capture logcat
+        adb logcat -c
+        adb logcat > build/logcat.log &
+        LOGCAT_PID=$!
       - |
         # set up release keystore
         echo $CM_KEYSTORE | base64 --decode > /tmp/keystore.keystore
@@ -79,14 +78,14 @@ workflows:
       - |
         # run tests
         ./gradlew test
-#         ./gradlew connectedAndroidTest -i
+        ./gradlew connectedAndroidTest -i
       - |  
         # build release apk
         ./gradlew assembleRelease
       - |
-#         # Stop the background processes
-#         kill $LOGCAT_PID
-#         kill $EMULATOR_PID
+        # Stop the background processes
+        kill $LOGCAT_PID
+        kill $EMULATOR_PID
     artifacts:
       - app/build/**/outputs/**/*.apk
     publishing:
