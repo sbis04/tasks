@@ -53,7 +53,7 @@ workflows:
             -netspeed full \
             -no-boot-anim \
             -no-snapshot-save \
-            -no-window
+            -no-window &
       - |
         # set up release keystore
         echo $CM_KEYSTORE | base64 --decode > /tmp/keystore.keystore
