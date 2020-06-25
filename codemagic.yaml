@@ -50,11 +50,7 @@ workflows:
         EMULATOR_PID=$!
       - |
         # Wait for Android to finish booting
-        WAIT_CMD="adb wait-for-device shell getprop init.svc.bootanim"
-        until $WAIT_CMD | grep -m 1 stopped; do
-          echo "Waiting..."
-          sleep 1
-        done
+        while [ "`adb shell getprop sys.boot_completed | tr -d '\r' `" != "1" ] ; do sleep 1; done
       - |
         # Clear and capture logcat
         adb logcat -c
