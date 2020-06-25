@@ -48,7 +48,6 @@ workflows:
       - |
         ~/programs/android-sdk-macosx/emulator/emulator \
             -avd emulator \
-            -avd wait-for-device
             -netdelay none \
             -netspeed full \
             -no-boot-anim \
