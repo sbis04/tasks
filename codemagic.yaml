@@ -47,13 +47,7 @@ workflows:
       # Launching Android emulator for instrumented test
       - |
         # start emulator
-        sudo kextload /Library/Extensions/intelhaxm.kext
-        ~/programs/android-sdk-macosx/tools/emulator \
-            -avd emulator \
-            -netdelay none \
-            -netspeed full \
-            -no-boot-anim \
-            -no-snapshot-save
+        emulator -avd emulator
       - |
         # set up release keystore
         echo $CM_KEYSTORE | base64 --decode > /tmp/keystore.keystore
