@@ -46,13 +46,7 @@ workflows:
     scripts:
       # Launching Android emulator for instrumented test
       - |
-        ~/programs/android-sdk-macosx/emulator/emulator \
-            -avd emulator \
-            -netdelay none \
-            -netspeed full \
-            -no-boot-anim \
-            -no-snapshot-save \
-            -no-window &
+        emulator @emulator &
         EMULATOR_PID=$!
       - |
         # Wait for Android to finish booting
