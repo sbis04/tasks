@@ -52,11 +52,6 @@ workflows:
         # Wait for Android to finish booting
         sleep 20
       - |
-        # Clear and capture logcat
-        adb logcat -c
-        adb logcat > build/logcat.log &
-        LOGCAT_PID=$!
-      - |
         # set up release keystore
         echo $CM_KEYSTORE | base64 --decode > /tmp/keystore.keystore
         cat >> "$FCI_BUILD_DIR/key.properties" <<EOF
@@ -72,10 +67,6 @@ workflows:
       - |  
         # build release apk
         ./gradlew assembleRelease
-      - |
-        # Stop the background processes
-        kill $LOGCAT_PID
-        kill $EMULATOR_PID
     artifacts:
       - app/build/**/outputs/**/*.apk
     publishing:
