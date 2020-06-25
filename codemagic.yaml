@@ -50,7 +50,7 @@ workflows:
         EMULATOR_PID=$!
       - |
         # Wait for Android to finish booting
-        while [ "`adb shell getprop sys.boot_completed | tr -d '\r' `" != "1" ] ; do sleep 1; done
+        sleep 20
       - |
         # Clear and capture logcat
         adb logcat -c
