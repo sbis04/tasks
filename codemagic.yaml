@@ -49,7 +49,7 @@ workflows:
         # start emulator
         export ANDROID_SDK=$HOME/Library/Android/sdk
         export PATH=$ANDROID_SDK/emulator:$ANDROID_SDK/tools:$PATH
-        ~/programs/android-sdk-macosx/tools/emulator -avd emulator
+        ~/programs/android-sdk-macosx/emulator/emulator -avd emulator &
       - |
         # set up release keystore
         echo $CM_KEYSTORE | base64 --decode > /tmp/keystore.keystore
