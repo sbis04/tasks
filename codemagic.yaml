@@ -45,7 +45,10 @@ workflows:
         CM_KEY_ALIAS_USERNAME: app
     scripts:
       # Launching Android emulator for instrumented test
-      - flutter emulators --launch emulator
+      - |
+        # start emulator
+        adb start-server
+        emulator @emulator
       - |
         # set up release keystore
         echo $CM_KEYSTORE | base64 --decode > /tmp/keystore.keystore
