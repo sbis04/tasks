@@ -48,7 +48,7 @@ workflows:
       - |
         # start emulator
         adb start-server
-        emulator @emulator
+        ~/programs/android-sdk-macosx/tools/emulator @emulator
       - |
         # set up release keystore
         echo $CM_KEYSTORE | base64 --decode > /tmp/keystore.keystore
