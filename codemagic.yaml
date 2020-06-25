@@ -47,7 +47,7 @@ workflows:
       # Launching Android emulator for instrumented test
       - |
         # start emulator
-        emulator -avd emulator
+        ~/programs/android-sdk-macosx/tools/emulator -avd emulator
       - |
         # set up release keystore
         echo $CM_KEYSTORE | base64 --decode > /tmp/keystore.keystore
