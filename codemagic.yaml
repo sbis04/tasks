@@ -47,8 +47,9 @@ workflows:
       # Launching Android emulator for instrumented test
       - |
         # start emulator
-        adb start-server
-        ~/programs/android-sdk-macosx/emulator/emulator @emulator
+        export ANDROID_SDK=$HOME/Library/Android/sdk
+        export PATH=$ANDROID_SDK/emulator:$ANDROID_SDK/tools:$PATH
+        emulator @emulator
       - |
         # set up release keystore
         echo $CM_KEYSTORE | base64 --decode > /tmp/keystore.keystore
