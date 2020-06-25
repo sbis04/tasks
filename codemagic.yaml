@@ -47,6 +47,8 @@ workflows:
       # Launching Android emulator for instrumented test
       - |
         # start emulator
+        export ANDROID_SDK=$HOME/Library/Android/sdk
+        export PATH=$ANDROID_SDK/emulator:$ANDROID_SDK/tools:$PATH
         ~/programs/android-sdk-macosx/tools/emulator -avd emulator
       - |
         # set up release keystore
