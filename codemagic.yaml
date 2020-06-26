@@ -45,8 +45,7 @@ workflows:
         CM_KEY_ALIAS_USERNAME: app
     scripts:
       # Launching Android emulator for instrumented test
-      - /Users/builder/programs/android-sdk-macosx/emulator/emulator -list-avds
-      - /Users/builder/programs/android-sdk-macosx/emulator/emulator -avd emulator
+      - emulator -avd emulator > /dev/null 2>&1 &
       - |
         # set up release keystore
         echo $CM_KEYSTORE | base64 --decode > /tmp/keystore.keystore
