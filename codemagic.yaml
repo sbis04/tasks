@@ -48,12 +48,15 @@ workflows:
       - |
         export ANDROID_ADB_SERVER_PORT=5555 
         adb start-server
-        kill 5554
         emulator -avd emulator -port 5554  &
         adb devices
       - |
         # Wait for Android to finish booting
         sleep 30
+        adb kill-server
+        adb start-server
+        adb devices
+        emulator -avd emulator  &
         adb devices
       - |
         # set up release keystore
