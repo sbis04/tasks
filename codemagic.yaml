@@ -47,10 +47,9 @@ workflows:
       # Launching Android emulator for instrumented test
       - |
         emulator @emulator &
-        EMULATOR_PID=$!
       - |
         # Wait for Android to finish booting
-        sleep 20
+        sleep 120
       - |
         # set up release keystore
         echo $CM_KEYSTORE | base64 --decode > /tmp/keystore.keystore
@@ -63,7 +62,7 @@ workflows:
       - |
         # run tests
         ./gradlew test
-        ./gradlew connectedAndroidTest -i
+        ./gradlew connectedAndroidTest
       - |  
         # build release apk
         ./gradlew assembleRelease
