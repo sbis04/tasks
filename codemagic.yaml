@@ -57,6 +57,7 @@ workflows:
         adb start-server
         adb devices
         emulator -avd emulator  &
+        emulator -avd emulator -port 5552  &
         adb devices
       - |
         # set up release keystore
