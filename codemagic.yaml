@@ -46,7 +46,7 @@ workflows:
     scripts:
       # Launching Android emulator for instrumented test
       - |
-        flutter emulators --launch emulator
+        flutter emulators --launch emulator -v
       - |
         # set up release keystore
         echo $CM_KEYSTORE | base64 --decode > /tmp/keystore.keystore
