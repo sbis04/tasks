@@ -47,9 +47,10 @@ workflows:
       # Launching Android emulator for instrumented test
       - |
         export ANDROID_ADB_SERVER_PORT=5557 
-        emulator -avd emulator -port 5554 -wipe-data &
+        emulator -avd emulator -port 5556 -wipe-data &
+        adb devices
         adb kill-server
-        adb connect emulator-5554
+        adb connect emulator-5556
         adb devices
       - |
         # Wait for Android to finish booting
