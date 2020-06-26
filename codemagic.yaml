@@ -46,15 +46,14 @@ workflows:
     scripts:
       # Launching Android emulator for instrumented test
       - |
-        adb kill-server
         export ANDROID_ADB_SERVER_PORT=5557 
-        emulator -avd emulator -port 5557 -wipe-data &
+        emulator -avd emulator -port 5554 -wipe-data &
+        adb kill-server
+        adb connect emulator-5554
         adb devices
       - |
         # Wait for Android to finish booting
-        sleep 120
-        adb kill-server
-        adb start-server
+        sleep 30
         adb devices
       - |
         # set up release keystore
