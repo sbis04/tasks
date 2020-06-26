@@ -48,14 +48,7 @@ workflows:
       - |
         export ANDROID_ADB_SERVER_PORT=5555 
         adb start-server
-#         emulator -avd emulator -port 5554  &
-        sudo kextload /Library/Extensions/intelhaxm.kext
-        ~/programs/android-sdk-macosx/tools/emulator \
-            -avd emulator \
-            -netdelay none \
-            -netspeed full \
-            -no-boot-anim \
-            -no-snapshot-save
+        emulator -avd emulator -port 5554  &
         adb devices
       - |
         # Wait for Android to finish booting
