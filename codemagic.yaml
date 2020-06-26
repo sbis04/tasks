@@ -46,7 +46,10 @@ workflows:
     scripts:
       # Launching Android emulator for instrumented test
       - |
-        emulator @emulator &
+        adb kill-server
+        emulator -avd emulator -port 5557
+        adb start-server
+        adb devices
       - |
         # Wait for Android to finish booting
         sleep 120
