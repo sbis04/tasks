@@ -47,12 +47,14 @@ workflows:
       # Launching Android emulator for instrumented test
       - |
         adb kill-server
+        export ANDROID_ADB_SERVER_PORT=5557 
         emulator -avd emulator -port 5557 &
         adb start-server
-        adb devices
+#         adb devices
       - |
         # Wait for Android to finish booting
         sleep 120
+        adb devices
       - |
         # set up release keystore
         echo $CM_KEYSTORE | base64 --decode > /tmp/keystore.keystore
