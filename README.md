@@ -5,8 +5,8 @@ This is a basic TODO app to demonstrate the use of `codemagic.yaml` for building
 ## Screenshots
 
 <p align="center">
-  <img width="250" src="https://github.com/sbis04/tasks/raw/master/screenshots/tasks_1.png" alt="Tasks"/>
-  <img width="250" src="https://github.com/sbis04/tasks/raw/master/screenshots/tasks_2.png" alt="Tasks"/>
+  <img width="250" src="https://github.com/sbis04/tasks/raw/master/screenshots/tasks_1.png" alt="Tasks"/>&nbsp;&nbsp;&nbsp;
+  <img width="250" src="https://github.com/sbis04/tasks/raw/master/screenshots/tasks_2.png" alt="Tasks"/>&nbsp;&nbsp;&nbsp;
   <img width="250" src="https://github.com/sbis04/tasks/raw/master/screenshots/tasks_3.png" alt="Tasks"/>
 </p>
 
