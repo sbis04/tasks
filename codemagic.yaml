@@ -7,8 +7,9 @@ workflows:
     name: Native Android
     max_build_duration: 60
     scripts:
-      # Launching Android emulator for instrumented test
-      - flutter emulators --launch emulator
+      - |
+        # launching android emulator
+        emulator -avd emulator > /dev/null 2>&1 &
       - |
         # set up debug keystore
         rm -f ~/.android/debug.keystore
@@ -44,10 +45,11 @@ workflows:
         CM_KEY_ALIAS_PASSWORD: Encrypted(Z0FBQUFBQmU4WXc5RlFTc0hqTk5FY3NCNmhjZ1VfYi1GNlJRWkE4M0g3SG5teG5DaklkNUdnQ1NPWnc5QnJHZmVkR2h1Rk14eWJGYk41UXdVXzFob2l5eDFyR1hSV0VaWUE9PQ==)
         CM_KEY_ALIAS_USERNAME: app
     scripts:
-      # Launching Android emulator for instrumented test
-      - flutter emulators --launch emulator
       - |
-        # set up release key.properties
+        # launching android emulator
+        emulator -avd emulator > /dev/null 2>&1 &
+      - |
+        # set up release keystore
         echo $CM_KEYSTORE | base64 --decode > /tmp/keystore.keystore
         cat >> "$FCI_BUILD_DIR/key.properties" <<EOF
         storePassword=$CM_KEYSTORE_PASSWORD
