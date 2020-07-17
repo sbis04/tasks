@@ -2,6 +2,14 @@
 
 This is a basic TODO app to demonstrate the use of `codemagic.yaml` for building native Android app on [Codemagic](https://codemagic.io/start/).
 
+## Screenshots
+
+<p align="center">
+  <img width="250" src="https://github.com/sbis04/tasks/raw/master/screenshots/tasks_1.png" alt="Tasks"/>
+  <img width="250" src="https://github.com/sbis04/tasks/raw/master/screenshots/tasks_2.png" alt="Tasks"/>
+  <img width="250" src="https://github.com/sbis04/tasks/raw/master/screenshots/tasks_3.png" alt="Tasks"/>
+</p>
+
 ## Codemagic YAML Template
 
 ```yaml
