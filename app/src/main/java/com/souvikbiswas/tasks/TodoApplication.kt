@@ -1,6 +1,7 @@
 package com.souvikbiswas.tasks
 
 import android.app.Application
+import com.souvikbiswas.tasks.data.source.TasksRepository
 import timber.log.Timber
 import timber.log.Timber.DebugTree
 
@@ -11,6 +12,10 @@ import timber.log.Timber.DebugTree
  * Also, sets up Timber in the DEBUG BuildConfig. Read Timber's documentation for production setups.
  */
 class TodoApplication : Application() {
+
+    // Depends on the flavor,
+    val taskRepository: TasksRepository
+        get() = ServiceLocator.provideTasksRepository(this)
 
     override fun onCreate() {
         super.onCreate()

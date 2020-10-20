@@ -1,3 +1,19 @@
+/*
+ * Copyright 2016, The Android Open Source Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.souvikbiswas.tasks.tasks
 
 import android.os.Bundle
@@ -8,60 +24,53 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.PopupMenu
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.fragment.navArgs
 import com.souvikbiswas.tasks.EventObserver
 import com.souvikbiswas.tasks.R
 import com.souvikbiswas.tasks.data.Task
 import com.souvikbiswas.tasks.databinding.TasksFragBinding
-import com.souvikbiswas.tasks.util.setupRefreshLayout
+import com.souvikbiswas.tasks.util.obtainViewModel
 import com.souvikbiswas.tasks.util.setupSnackbar
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import timber.log.Timber
+import java.util.ArrayList
 
 /**
  * Display a grid of [Task]s. User can choose to view all, active or completed tasks.
  */
 class TasksFragment : Fragment() {
 
-    private val viewModel by viewModels<TasksViewModel>()
-
-    private val args: TasksFragmentArgs by navArgs()
-
     private lateinit var viewDataBinding: TasksFragBinding
-
     private lateinit var listAdapter: TasksAdapter
 
-    override fun onCreateView(
-            inflater: LayoutInflater, container: ViewGroup?,
-            savedInstanceState: Bundle?
-    ): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
+            savedInstanceState: Bundle?): View? {
         viewDataBinding = TasksFragBinding.inflate(inflater, container, false).apply {
-            viewmodel = viewModel
+            viewmodel = obtainViewModel(TasksViewModel::class.java)
         }
         setHasOptionsMenu(true)
         return viewDataBinding.root
     }
 
     override fun onOptionsItemSelected(item: MenuItem) =
-            when (item.itemId) {
-                R.id.menu_clear -> {
-                    viewModel.clearCompletedTasks()
-                    true
-                }
-                R.id.menu_filter -> {
-                    showFilteringPopUpMenu()
-                    true
-                }
-                R.id.menu_refresh -> {
-                    viewModel.loadTasks(true)
-                    true
-                }
-                else -> false
+        when (item.itemId) {
+            R.id.menu_clear -> {
+                viewDataBinding.viewmodel?.clearCompletedTasks()
+                true
             }
+            R.id.menu_filter -> {
+                showFilteringPopUpMenu()
+                true
+            }
+            R.id.menu_refresh -> {
+                viewDataBinding.viewmodel?.loadTasks(true)
+                true
+            }
+            else -> false
+        }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.tasks_fragment_menu, menu)
@@ -74,24 +83,28 @@ class TasksFragment : Fragment() {
         viewDataBinding.lifecycleOwner = this.viewLifecycleOwner
         setupSnackbar()
         setupListAdapter()
-        setupRefreshLayout(viewDataBinding.refreshLayout, viewDataBinding.tasksList)
+        setupRefreshLayout()
         setupNavigation()
         setupFab()
+        viewDataBinding.viewmodel?.loadTasks(true)
     }
 
     private fun setupNavigation() {
-        viewModel.openTaskEvent.observe(this, EventObserver {
+        viewDataBinding.viewmodel?.openTaskEvent?.observe(this, EventObserver {
             openTaskDetails(it)
         })
-        viewModel.newTaskEvent.observe(this, EventObserver {
+        viewDataBinding.viewmodel?.newTaskEvent?.observe(this, EventObserver {
             navigateToAddNewTask()
         })
     }
 
     private fun setupSnackbar() {
-        view?.setupSnackbar(this, viewModel.snackbarText, Snackbar.LENGTH_SHORT)
+        viewDataBinding.viewmodel?.let {
+            view?.setupSnackbar(this, it.snackbarMessage, Snackbar.LENGTH_SHORT)
+        }
         arguments?.let {
-            viewModel.showEditResultMessage(args.userMessage)
+            val message = TasksFragmentArgs.fromBundle(it).userMessage
+            viewDataBinding.viewmodel?.showEditResultMessage(message)
         }
     }
 
@@ -101,13 +114,16 @@ class TasksFragment : Fragment() {
             menuInflater.inflate(R.menu.filter_tasks, menu)
 
             setOnMenuItemClickListener {
-                viewModel.setFiltering(
-                        when (it.itemId) {
-                            R.id.active -> TasksFilterType.ACTIVE_TASKS
-                            R.id.completed -> TasksFilterType.COMPLETED_TASKS
-                            else -> TasksFilterType.ALL_TASKS
-                        }
-                )
+                viewDataBinding.viewmodel?.run {
+                    setFiltering(
+                            when (it.itemId) {
+                                R.id.active -> TasksFilterType.ACTIVE_TASKS
+                                R.id.completed -> TasksFilterType.COMPLETED_TASKS
+                                else -> TasksFilterType.ALL_TASKS
+                            }
+                    )
+                    loadTasks(false)
+                }
                 true
             }
             show()
@@ -115,7 +131,7 @@ class TasksFragment : Fragment() {
     }
 
     private fun setupFab() {
-        activity?.findViewById<FloatingActionButton>(R.id.add_task_fab)?.let {
+        activity?.findViewById<FloatingActionButton>(R.id.fab_add_task)?.let {
             it.setOnClickListener {
                 navigateToAddNewTask()
             }
@@ -124,10 +140,8 @@ class TasksFragment : Fragment() {
 
     private fun navigateToAddNewTask() {
         val action = TasksFragmentDirections
-                .actionTasksFragmentToAddEditTaskFragment(
-                        null,
-                        resources.getString(R.string.add_task)
-                )
+            .actionTasksFragmentToAddEditTaskFragment(null,
+                resources.getString(R.string.add_task))
         findNavController().navigate(action)
     }
 
@@ -139,10 +153,22 @@ class TasksFragment : Fragment() {
     private fun setupListAdapter() {
         val viewModel = viewDataBinding.viewmodel
         if (viewModel != null) {
-            listAdapter = TasksAdapter(viewModel)
+            listAdapter = TasksAdapter(ArrayList(0), viewModel)
             viewDataBinding.tasksList.adapter = listAdapter
         } else {
             Timber.w("ViewModel not initialized when attempting to set up adapter.")
+        }
+    }
+
+    private fun setupRefreshLayout() {
+        viewDataBinding.refreshLayout.run {
+            setColorSchemeColors(
+                    ContextCompat.getColor(requireActivity(), R.color.colorPrimary),
+                    ContextCompat.getColor(requireActivity(), R.color.colorAccent),
+                    ContextCompat.getColor(requireActivity(), R.color.colorPrimaryDark)
+            )
+            // Set the scrolling view in the custom SwipeRefreshLayout.
+            scrollUpChild = viewDataBinding.tasksList
         }
     }
 }

@@ -1,19 +1,33 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright (C) 2017 The Android Open Source Project
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~      http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
 
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+        xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
 
-        <import type="android.view.View" />
+        <import type="android.view.View"/>
 
         <variable
             name="viewmodel"
-            type="com.souvikbiswas.tasks.addedittask.AddEditTaskViewModel" />
+            type="com.souvikbiswas.tasks.addedittask.AddEditTaskViewModel"/>
     </data>
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
-        android:id="@+id/coordinator_layout"
+        android:id="@+id/coordinatorLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -39,7 +53,7 @@
                     android:visibility="@{viewmodel.dataLoading ? View.GONE : View.VISIBLE}">
 
                     <EditText
-                        android:id="@+id/add_task_title_edit_text"
+                        android:id="@+id/add_task_title"
                         android:background="@null"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -48,24 +62,24 @@
                         android:maxLines="1"
                         android:text="@={viewmodel.title}"
                         android:textStyle="bold"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Title" />
+                        android:textAppearance="@style/TextAppearance.AppCompat.Title"/>
 
                     <EditText
-                        android:id="@+id/add_task_description_edit_text"
+                        android:id="@+id/add_task_description"
                         android:background="@null"
                         android:layout_width="match_parent"
-                        android:layout_height="150dp"
+                        android:layout_height="350dp"
                         android:gravity="top"
                         android:hint="@string/description_hint"
                         android:imeOptions="flagNoExtractUi"
-                        android:text="@={viewmodel.description}" />
+                        android:text="@={viewmodel.description}"/>
 
                 </LinearLayout>
             </ScrollView>
         </com.souvikbiswas.tasks.ScrollChildSwipeRefreshLayout>
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/save_task_fab"
+            android:id="@+id/fab_save_task"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/fab_margin"
@@ -73,6 +87,6 @@
             android:onClick="@{() -> viewmodel.saveTask()}"
             app:fabSize="normal"
             app:layout_anchor="@id/refresh_layout"
-            app:layout_anchorGravity="bottom|right|end" />
+            app:layout_anchorGravity="bottom|right|end"/>
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>

@@ -1,3 +1,18 @@
+/*
+ * Copyright (C) 2017 The Android Open Source Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.souvikbiswas.tasks.taskdetail
 
 import android.os.Bundle
@@ -7,15 +22,14 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.CheckBox
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.fragment.navArgs
 import com.souvikbiswas.tasks.EventObserver
 import com.souvikbiswas.tasks.R
 import com.souvikbiswas.tasks.databinding.TaskdetailFragBinding
-import com.souvikbiswas.tasks.tasks.DELETE_RESULT_OK
-import com.souvikbiswas.tasks.util.setupRefreshLayout
+import com.souvikbiswas.tasks.util.DELETE_RESULT_OK
+import com.souvikbiswas.tasks.util.obtainViewModel
 import com.souvikbiswas.tasks.util.setupSnackbar
 import com.google.android.material.snackbar.Snackbar
 
@@ -25,38 +39,45 @@ import com.google.android.material.snackbar.Snackbar
 class TaskDetailFragment : Fragment() {
     private lateinit var viewDataBinding: TaskdetailFragBinding
 
-    private val args: TaskDetailFragmentArgs by navArgs()
-
-    private val viewModel by viewModels<TaskDetailViewModel>()
+    private lateinit var viewModel: TaskDetailViewModel
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         setupFab()
-        view?.setupSnackbar(this, viewModel.snackbarText, Snackbar.LENGTH_SHORT)
+        viewDataBinding.viewmodel?.let {
+            view?.setupSnackbar(this, it.snackbarMessage, Snackbar.LENGTH_SHORT)
+        }
+
         setupNavigation()
-        this.setupRefreshLayout(viewDataBinding.refreshLayout)
     }
 
     private fun setupNavigation() {
-        viewModel.deleteTaskEvent.observe(this, EventObserver {
+        viewModel.deleteTaskCommand.observe(this, EventObserver {
             val action = TaskDetailFragmentDirections
-                    .actionTaskDetailFragmentToTasksFragment(DELETE_RESULT_OK)
+                .actionTaskDetailFragmentToTasksFragment(DELETE_RESULT_OK)
             findNavController().navigate(action)
         })
-        viewModel.editTaskEvent.observe(this, EventObserver {
+        viewModel.editTaskCommand.observe(this, EventObserver {
+            val taskId = TaskDetailFragmentArgs.fromBundle(arguments!!).TASKID
             val action = TaskDetailFragmentDirections
-                    .actionTaskDetailFragmentToAddEditTaskFragment(
-                            args.taskId,
-                            resources.getString(R.string.edit_task)
-                    )
+                .actionTaskDetailFragmentToAddEditTaskFragment(taskId,
+                    resources.getString(R.string.edit_task))
             findNavController().navigate(action)
         })
     }
 
     private fun setupFab() {
-        activity?.findViewById<View>(R.id.edit_task_fab)?.setOnClickListener {
-            viewModel.editTask()
+        activity?.findViewById<View>(R.id.fab_edit_task)?.setOnClickListener {
+            viewDataBinding.viewmodel?.editTask()
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        val taskId = arguments?.let {
+            TaskDetailFragmentArgs.fromBundle(it).TASKID
+        }
+        viewDataBinding.viewmodel?.start(taskId)
     }
 
     override fun onCreateView(
@@ -65,13 +86,16 @@ class TaskDetailFragment : Fragment() {
             savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.taskdetail_frag, container, false)
+        viewModel = obtainViewModel(TaskDetailViewModel::class.java)
         viewDataBinding = TaskdetailFragBinding.bind(view).apply {
             viewmodel = viewModel
+            listener = object : TaskDetailUserActionsListener {
+                override fun onCompleteChanged(v: View) {
+                    viewmodel?.setCompleted((v as CheckBox).isChecked)
+                }
+            }
         }
-        viewDataBinding.lifecycleOwner = this.viewLifecycleOwner
-
-        viewModel.start(args.taskId)
-
+        viewDataBinding.setLifecycleOwner(this.viewLifecycleOwner)
         setHasOptionsMenu(true)
         return view
     }
@@ -79,7 +103,7 @@ class TaskDetailFragment : Fragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.menu_delete -> {
-                viewModel.deleteTask()
+                viewDataBinding.viewmodel?.deleteTask()
                 true
             }
             else -> false
