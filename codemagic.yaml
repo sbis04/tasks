@@ -3,6 +3,34 @@
 
 # Workflow setup for building Native Android project
 workflows:
+  simple-workflow:
+    name: Native Android
+    max_build_duration: 60
+    scripts:
+      - |
+        # set up debug keystore
+        rm -f ~/.android/debug.keystore
+        keytool -genkeypair \
+          -alias androiddebugkey \
+          -keypass android \
+          -keystore ~/.android/debug.keystore \
+          -storepass android \
+          -dname 'CN=Android Debug,O=Android,C=US' \
+          -keyalg 'RSA' \
+          -keysize 2048 \
+          -validity 10000
+      - |
+        # run tests
+        ./gradlew test
+      - |  
+        # build debug apk
+        ./gradlew assembleDebug
+    artifacts:
+      - app/build/**/outputs/**/*.apk
+    publishing:
+      email:
+        recipients:
+          - sbis1999@gmail.com
   debug-workflow:
     name: Native Android
     max_build_duration: 60
